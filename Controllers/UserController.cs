@@ -25,19 +25,30 @@ namespace shipbob.Controllers
             var users = await _orderItemService.GetAllUsersAsync();
 
             return users;
-        }  
+        }
 
-        [HttpPost]
-        public IActionResult Create([FromBody] UserItem item)
+        [HttpGet("{ID}")]
+        public async Task<IActionResult> GetById(int id)
         {
-           if (item == null)
-           {
-               return BadRequest();
-           }
+            var item = await _orderItemService.GetUserAsync(id);
+            if (item == null)
+            {
+                return NotFound("Order not found");
+            }
+            return Ok(item);
+        }
+  
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] UserItem item)
+        {
+            if (item == null)
+            {
+                return BadRequest();
+            }
 
-           _orderItemService.CreateUser(item);
-           
-           return Ok();
+            await _orderItemService.CreateUser(item);
+
+            return CreatedAtAction(nameof(GetById), new { id = item.ID }, item);
         }
     }
 }

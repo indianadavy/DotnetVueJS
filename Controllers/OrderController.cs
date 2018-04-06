@@ -9,10 +9,8 @@ using shipbob.Models;
 
 namespace shipbob.Controllers
 {
-    //[Route("api/[controller]")]
     public class OrderController : Controller
     {
-
         private readonly IOrderItemService _orderItemService;
 
         public OrderController(IOrderItemService orderItemService)
@@ -36,16 +34,6 @@ namespace shipbob.Controllers
                 return NotFound("Order not found");
             }
             return Ok(item);
-            // return new ObjectResult(item);
-
-            //  var model = await _db.Get(...);
-
-            // if (model == null)
-            // {
-            //     return NotFound("Product not found");
-            // }
-
-            // return Ok(model);
         }
 
         [HttpGet("Api/Order/ForUser/{userID}", Name = "GetOrdersForUser")]
@@ -56,18 +44,20 @@ namespace shipbob.Controllers
         }
 
         [HttpPost("Api/Order")]
-        public IActionResult Create([FromBody] OrderItem item)
+        public async Task<IActionResult> Create([FromBody] OrderItem item)
         {
-           if (item == null)
-           {
-               return BadRequest();
-           }
-           _orderItemService.CreateOrder(item); 
-           return Ok();
+            if (item == null)
+            {
+                return BadRequest();
+            }
+
+            await _orderItemService.CreateOrder(item);
+
+            return CreatedAtAction(nameof(GetById), new { id = item.ID }, item);
         }
 
         [HttpPut("Api/Order")]
-        public IActionResult Update([FromBody] OrderItem item)
+        public async Task<IActionResult> Update([FromBody] OrderItem item)
         {
             if (item == null)
             {
@@ -75,16 +65,13 @@ namespace shipbob.Controllers
             }
             try
             {
-                _orderItemService.UpdateOrder(item);
+                await _orderItemService.UpdateOrder(item);
             }
             catch (Exception)
             {
-                //Log the error (uncomment ex variable name and write a log.)
-                ModelState.AddModelError("", "Unable to save changes. " +
-                    "Try again, and if the problem persists, " +
-                    "see your system administrator.");
+                throw new Exception();
             }
-           return Ok();
+            return Ok();
         }
     }
 }

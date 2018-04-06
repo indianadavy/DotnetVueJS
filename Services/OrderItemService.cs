@@ -52,13 +52,7 @@ namespace shipbob.Services
             orderToUpdate.UserID = order.UserID;
 
             return await _context.SaveChangesAsync();
-        }
-            // var oldOrder = _context.Orders.SingleOrDefaultAsync(o => o.ID == order.ID).;
-            // if (oldOrder != null)
-            // {
-            //     oldOrder
-            // }
-            // await _context.Orders.Update();
+        }    
         #endregion
 
         #region Users
@@ -67,6 +61,12 @@ namespace shipbob.Services
             var users = await _context.Users.ToArrayAsync();
 
             return users;
+        }
+        public async Task<UserItem> GetUserAsync(int UserID)
+        {
+            var user = await _context.Users.SingleAsync(t => t.ID == UserID);
+
+            return user;
         }
         public async Task<int> CreateUser(UserItem user)
         {

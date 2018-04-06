@@ -13,6 +13,7 @@ namespace shipbob.Services
         Task<int> CreateOrder(OrderItem order);
         Task<int> UpdateOrder(OrderItem order);
         Task<IEnumerable<UserItem>> GetAllUsersAsync();
+        Task<UserItem> GetUserAsync(int UserID);
         Task<int> CreateUser(UserItem user);
 
     }
